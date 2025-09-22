@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
 import soundfile as sf
-import torchaudio.transforms as T
+from fractions import Fraction
+from scipy.signal import resample_poly
 from transformers import AutoConfig, Wav2Vec2Processor
 from Wav2Vec2ForSpeechClassification import Wav2Vec2ForSpeechClassification
 
@@ -14,14 +15,15 @@ sampling_rate = processor.feature_extractor.sampling_rate
 model = Wav2Vec2ForSpeechClassification.from_pretrained(MY_MODEL).to(device)
 
 def speech_file_to_array_fn(path, sampling_rate):
-    speech, sr = sf.read(path)  
-    speech = torch.tensor(speech).float()
-    if sr != sampling_rate:
-        resampler = T.Resample(sr, sampling_rate)
-        speech = resampler(speech)
+    speech, sr = sf.read(path)
+    # Ensure mono
     if len(speech.shape) == 2:
-        speech = speech.mean(dim=0)
-    return speech.numpy()
+        speech = speech.mean(axis=0)
+    # Resample if needed using efficient polyphase method
+    if sr != sampling_rate:
+        ratio = Fraction(int(sampling_rate), int(sr)).limit_denominator(100)
+        speech = resample_poly(speech, ratio.numerator, ratio.denominator)
+    return speech
 
 def predict(path, sampling_rate):
     speech = speech_file_to_array_fn(path, sampling_rate)
