@@ -38,12 +38,11 @@ def predict(path, sampling_rate):
 
 CONFIDENCE_THRESHOLD = 0.7
 
-res = predict("scream.wav", sampling_rate)
-top_label = max(res, key=lambda x: x['Score'])
-
-print(f"Detected Vocalization: {top_label['Vocalization']} (Confidence: {top_label['Score']:.2f})")
-
-if top_label["Vocalization"].lower() == "screaming" and top_label["Score"] > CONFIDENCE_THRESHOLD:
-    print("environment unsafe")
-else:
-    print("environment safe")
+if __name__ == "__main__":
+    res = predict("scream.wav", sampling_rate)
+    top_label = max(res, key=lambda x: x['Score'])
+    print(f"Detected Vocalization: {top_label['Vocalization']} (Confidence: {top_label['Score']:.2f})")
+    if top_label["Vocalization"].lower() == "screaming" and top_label["Score"] > CONFIDENCE_THRESHOLD:
+        print("environment unsafe")
+    else:
+        print("environment safe")
