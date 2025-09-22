@@ -1,12 +1,12 @@
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
-# Pin Torch stack to versions with manylinux wheels for Python 3.10 on CPU
-torch==2.2.2
-torchaudio==2.2.2
+# Use Torch stack compatible with Python 3.13 wheels on Railway
+torch==2.8.0
+torchaudio==2.8.0
 
 soundfile==0.12.1
 transformers==4.41.2
-huggingface-hub==0.23.2
+huggingface-hub>=0.23.0
 tokenizers==0.19.1
-numpy==1.26.4
+numpy==2.3.3
 
